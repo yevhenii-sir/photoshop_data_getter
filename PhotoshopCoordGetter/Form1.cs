@@ -27,43 +27,6 @@ namespace PhotoshopCoordGetter
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (listBox1.SelectedIndex >= 1)
-            {
-                (listBox1.Items[listBox1.SelectedIndex - 1], listBox1.Items[listBox1.SelectedIndex]) = (listBox1.Items[listBox1.SelectedIndex], listBox1.Items[listBox1.SelectedIndex - 1]);
-                listBox1.SetSelected(Math.Clamp(listBox1.SelectedIndex - 1, 0, listBox1.Items.Count - 1), true);
-                SaveList();
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (listBox1.SelectedIndex <= (listBox1.Items.Count - 2) && listBox1.SelectedIndex >= 0)
-            {
-                (listBox1.Items[listBox1.SelectedIndex + 1], listBox1.Items[listBox1.SelectedIndex]) = (listBox1.Items[listBox1.SelectedIndex], listBox1.Items[listBox1.SelectedIndex + 1]);
-                listBox1.SetSelected(Math.Clamp(listBox1.SelectedIndex + 1, 0, listBox1.Items.Count - 1), true);
-                SaveList();
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                listBox1.Items.RemoveAt(listBox1.SelectedIndex);
-                SaveList();
-            }
-            catch { }
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            listBox1.Items.Add(textBox5.Text);
-            textBox5.Text = "";
-            SaveList();
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             if (File.Exists("previous.ini"))
@@ -121,8 +84,6 @@ namespace PhotoshopCoordGetter
         {
             using (StreamWriter streamWriter = new StreamWriter(new FileStream("previous.ini", FileMode.Create)))
             {
-                //streamWriter.WriteLine(checkBox1.Checked ? "1" : "0");
-
                 foreach (var text in listBox1.Items)
                 {
                     streamWriter.WriteLine(text);
@@ -143,29 +104,6 @@ namespace PhotoshopCoordGetter
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.Filter = "Photoshop Files|*.psd;|All files (*.*)|*.*";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                path_file = openFileDialog1.FileName;
-
-                try
-                {
-                    document = PsdDocument.Create(path_file);
-
-                    label8.Text = "Document size: " + document.Width + " x " + document.Height;
-
-                    List<string> temp_names_list = new List<string>();
-
-                    treeView1.Nodes.Add(ShowLayers(document.Childs, "path", temp_names_list));
-                    treeView1.ExpandAll();
-
-                    textBox3.Text = path_file;
-                } catch { }
-            }
-        }
-
         private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Nodes.Count > 0)
@@ -175,33 +113,6 @@ namespace PhotoshopCoordGetter
                     e.Node.Nodes[i].Checked = e.Node.Checked;
                 }
             }
-        }
-
-        public static IEnumerable<TreeNode> AllNodes(TreeNodeCollection nodes)
-        {
-            foreach (TreeNode n in nodes)
-            {
-                yield return n;
-                foreach (TreeNode child in AllNodes(n.Nodes))
-                    yield return child;
-            }
-        }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            foreach (var node in AllNodes(treeView1.Nodes))
-                node.Checked = true;
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-            foreach (var node in AllNodes(treeView1.Nodes))
-                node.Checked = false;
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            listBox1.Items.Clear();
         }
 
         public static void SaveImageToFile(BitmapSource file, String name, double scale)
@@ -214,19 +125,9 @@ namespace PhotoshopCoordGetter
                 encoder.Frames.Add(BitmapFrame.Create(file));
                 encoder.Save(fileStream);
             }
-        }
 
-        public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
-        {
-            Bitmap bitmap;
-            using (MemoryStream outStream = new MemoryStream())
-            {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapsource));
-                enc.Save(outStream);
-                bitmap = new Bitmap(outStream);
-            }
-            return bitmap;
+            GC.Collect(0, GCCollectionMode.Forced);
+            GC.WaitForPendingFinalizers();
         }
 
         public static BitmapSource GetBitmap(IImageSource imageSource)
@@ -240,10 +141,7 @@ namespace PhotoshopCoordGetter
             var w = imageSource.Width;
             var h = imageSource.Height;
 
-            //var format = channelCount == 3 ? TextureFormat.RGB24 : TextureFormat.ARGB32;
-            //var tex = new Texture2D(w, h, format, false);
             var colors = new System.Windows.Media.Color[data.Length / channelCount];
-
 
             var k = 0;
             for (var y = h - 1; y >= 0; --y)
@@ -271,42 +169,12 @@ namespace PhotoshopCoordGetter
                     colors[k++] = c;
                 }
             }
-
+            
             if (channelCount == 4)
-                return BitmapSource.Create(imageSource.Width, imageSource.Height, 96, 96, PixelFormats.Bgra32, null,
-                    data, pitch);
-            return BitmapSource.Create(imageSource.Width, imageSource.Height, 96, 96, PixelFormats.Bgr24, null, data,
-                pitch);
-        }
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-            using (var fbd = new FolderBrowserDialog())
-            {
-                DialogResult result = fbd.ShowDialog();
-
-                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                {
-                    floder_to_save_image = fbd.SelectedPath;
-                    textBox4.Text = floder_to_save_image;
-                }
-            }
-        }
-
-        private void button11_Click(object sender, EventArgs e)
-        {
-            if (floder_to_save_image != null)
-            {
-                try
-                {
-                    foreach (var node in AllNodes(treeView1.Nodes))
-                        if (node.Checked && node.Nodes.Count == 0) 
-                            SaveImageToFile(GetBitmap(PSDLayersDictionary[node.Text]), floder_to_save_image + "/" + node.Text, Convert.ToDouble(textBox9.Text));
-                    MessageBox.Show("Saved!");
-                    Process.Start("explorer.exe", floder_to_save_image);
-                } catch { }
-            }
-            else MessageBox.Show("Сhoose a folder to save!");
+                return BitmapSource.Create(imageSource.Width, imageSource.Height, 96, 96, 
+                    PixelFormats.Bgra32, null,data, pitch);
+            return BitmapSource.Create(imageSource.Width, imageSource.Height, 96, 96, 
+                PixelFormats.Bgr24, null, data, pitch);
         }
 
         private (double x, double y) GetCoordinateWithOrigin(IPsdLayer item)
@@ -329,13 +197,91 @@ namespace PhotoshopCoordGetter
             return (item.Left, item.Right);
         }
 
-        private void button12_Click(object sender, EventArgs e)
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            ProcessStartInfo psInfo = new ProcessStartInfo
+            {
+                FileName = "https://github.com/yevhenii-sir",
+                UseShellExecute = true
+            };
+            Process.Start(psInfo);
+        }
+
+        private void uncheckAllBtn_Click(object sender, EventArgs e)
+        {
+            foreach (var node in Descendants(treeView1.Nodes))
+                node.Checked = false;
+        }
+
+        private void checkAllBtn_Click(object sender, EventArgs e)
+        {
+            foreach (var node in Descendants(treeView1.Nodes))
+                node.Checked = true;
+        }
+
+        private void openFileBtn_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "Photoshop Files|*.psd;|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                path_file = openFileDialog1.FileName;
+
+                try
+                {
+                    document = PsdDocument.Create(path_file);
+
+                    label8.Text = "Document size: " + document.Width + " x " + document.Height;
+
+                    List<string> temp_names_list = new List<string>();
+
+                    treeView1.Nodes.Add(ShowLayers(document.Childs, "path", temp_names_list));
+                    treeView1.ExpandAll();
+
+                    textBox3.Text = path_file;
+                }
+                catch { }
+            }
+        }
+
+        private void openFolderBtn_Click(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    floder_to_save_image = fbd.SelectedPath;
+                    textBox4.Text = floder_to_save_image;
+                }
+            }
+        }
+
+        private void saveImagesBtn_Click(object sender, EventArgs e)
+        {
+            if (floder_to_save_image != null)
+            {
+                try
+                {
+                    foreach (var node in Descendants(treeView1.Nodes))
+                        if (node.Checked && node.Nodes.Count == 0)
+                            SaveImageToFile(GetBitmap(PSDLayersDictionary[node.Text]), floder_to_save_image + "/" + node.Text, Convert.ToDouble(textBox9.Text));
+
+                    MessageBox.Show("Saved!");
+                    Process.Start("explorer.exe", floder_to_save_image);
+                }
+                catch { }
+            }
+            else MessageBox.Show("Сhoose a folder to save!");
+        }
+
+        private void getCoordinatesBtn_Click(object sender, EventArgs e)
         {
             try
             {
                 textBox2.Text = "";
                 double sceneScale = Convert.ToDouble(textBox8.Text);
-                foreach (var node in AllNodes(treeView1.Nodes))
+                foreach (var node in Descendants(treeView1.Nodes))
                 {
                     if (node.Checked && node.Nodes.Count == 0)
                     {
@@ -357,17 +303,50 @@ namespace PhotoshopCoordGetter
                         textBox2.Text += tempString + "\r\n";
                     }
                 }
-            } catch { }
+            }
+            catch { }
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void addSeparatorBtn_Click(object sender, EventArgs e)
         {
-            ProcessStartInfo psInfo = new ProcessStartInfo
+            listBox1.Items.Add(textBox5.Text);
+            textBox5.Text = "";
+            SaveList();
+        }
+
+        private void clearListBtn_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex >= 1)
             {
-                FileName = "https://github.com/yevhenii-sir",
-                UseShellExecute = true
-            };
-            Process.Start(psInfo);
+                (listBox1.Items[listBox1.SelectedIndex - 1], listBox1.Items[listBox1.SelectedIndex]) = (listBox1.Items[listBox1.SelectedIndex], listBox1.Items[listBox1.SelectedIndex - 1]);
+                listBox1.SetSelected(Math.Clamp(listBox1.SelectedIndex - 1, 0, listBox1.Items.Count - 1), true);
+                SaveList();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex <= (listBox1.Items.Count - 2) && listBox1.SelectedIndex >= 0)
+            {
+                (listBox1.Items[listBox1.SelectedIndex + 1], listBox1.Items[listBox1.SelectedIndex]) = (listBox1.Items[listBox1.SelectedIndex], listBox1.Items[listBox1.SelectedIndex + 1]);
+                listBox1.SetSelected(Math.Clamp(listBox1.SelectedIndex + 1, 0, listBox1.Items.Count - 1), true);
+                SaveList();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                listBox1.Items.RemoveAt(listBox1.SelectedIndex);
+                SaveList();
+            }
+            catch { }
         }
     }
 }

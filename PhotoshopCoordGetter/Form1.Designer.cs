@@ -45,7 +45,7 @@ namespace PhotoshopCoordGetter
             this.label2 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button7 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
+            this.checkAllBtn = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox5 = new System.Windows.Forms.TextBox();
@@ -141,7 +141,7 @@ namespace PhotoshopCoordGetter
             this.button4.TabIndex = 5;
             this.button4.Text = "Add separator";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.addSeparatorBtn_Click);
             // 
             // treeView1
             // 
@@ -163,7 +163,7 @@ namespace PhotoshopCoordGetter
             this.button5.TabIndex = 7;
             this.button5.Text = "Open";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.Click += new System.EventHandler(this.openFileBtn_Click);
             // 
             // textBox2
             // 
@@ -222,18 +222,18 @@ namespace PhotoshopCoordGetter
             this.button7.TabIndex = 14;
             this.button7.Text = "Open";
             this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.button7.Click += new System.EventHandler(this.openFolderBtn_Click);
             // 
-            // button8
+            // checkAllBtn
             // 
-            this.button8.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button8.Location = new System.Drawing.Point(12, 407);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(191, 23);
-            this.button8.TabIndex = 15;
-            this.button8.Text = "Check all";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.checkAllBtn.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.checkAllBtn.Location = new System.Drawing.Point(12, 407);
+            this.checkAllBtn.Name = "checkAllBtn";
+            this.checkAllBtn.Size = new System.Drawing.Size(191, 23);
+            this.checkAllBtn.TabIndex = 15;
+            this.checkAllBtn.Text = "Check all";
+            this.checkAllBtn.UseVisualStyleBackColor = true;
+            this.checkAllBtn.Click += new System.EventHandler(this.checkAllBtn_Click);
             // 
             // button9
             // 
@@ -244,13 +244,13 @@ namespace PhotoshopCoordGetter
             this.button9.TabIndex = 16;
             this.button9.Text = "Uncheck all";
             this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.button9.Click += new System.EventHandler(this.uncheckAllBtn_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(297, 89);
+            this.label3.Location = new System.Drawing.Point(296, 90);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(50, 15);
             this.label3.TabIndex = 17;
@@ -272,7 +272,7 @@ namespace PhotoshopCoordGetter
             this.button10.TabIndex = 19;
             this.button10.Text = "Remove all";
             this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
+            this.button10.Click += new System.EventHandler(this.clearListBtn_Click);
             // 
             // label4
             // 
@@ -293,7 +293,7 @@ namespace PhotoshopCoordGetter
             this.button11.TabIndex = 21;
             this.button11.Text = "Save selected images";
             this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
+            this.button11.Click += new System.EventHandler(this.saveImagesBtn_Click);
             // 
             // label5
             // 
@@ -334,13 +334,13 @@ namespace PhotoshopCoordGetter
             // button12
             // 
             this.button12.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button12.Location = new System.Drawing.Point(382, 82);
+            this.button12.Location = new System.Drawing.Point(360, 82);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(200, 23);
+            this.button12.Size = new System.Drawing.Size(222, 23);
             this.button12.TabIndex = 26;
             this.button12.Text = "Get coordinates";
             this.button12.UseVisualStyleBackColor = true;
-            this.button12.Click += new System.EventHandler(this.button12_Click);
+            this.button12.Click += new System.EventHandler(this.getCoordinatesBtn_Click);
             // 
             // textBox8
             // 
@@ -532,7 +532,7 @@ namespace PhotoshopCoordGetter
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button9);
-            this.Controls.Add(this.button8);
+            this.Controls.Add(this.checkAllBtn);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label2);
@@ -575,7 +575,7 @@ namespace PhotoshopCoordGetter
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button checkAllBtn;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox5;
