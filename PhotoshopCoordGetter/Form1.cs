@@ -221,6 +221,7 @@ namespace PhotoshopCoordGetter
 
         private void openFileBtn_Click(object sender, EventArgs e)
         {
+            treeView1.Nodes.Clear();
             openFileDialog1.Filter = "Photoshop Files|*.psd;|All files (*.*)|*.*";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
